@@ -54,14 +54,14 @@ MongoClient.connect(uri, function (err, client) {
 
             app.get('/users', async (req, res) => {
                 const cursor = usersCollection.find({})
-                const tools = await cursor.toArray()
-                res.send(tools)
+                const users = await cursor.toArray()
+                res.send(users)
             })
 
             app.get('/reviews', async (req, res) => {
                 const cursor = reviewsCollection.find({})
-                const tools = await cursor.toArray()
-                res.send(tools)
+                const reviews = await cursor.toArray()
+                res.send(reviews)
             })
 
 
@@ -83,7 +83,17 @@ MongoClient.connect(uri, function (err, client) {
                 res.send(result)
             })
 
-
+            app.put('/users/admin/:email', async (req, res) => {
+                const email = req.params.email;
+                const filter = { email: email };
+                const updatedDoc = {
+                    $set: {
+                        role: 'admin'
+                    }
+                }
+                const result = await usersCollection.updateOne(filter, updatedDoc)
+                res.send(result)
+            })
 
 
         }
