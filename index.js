@@ -41,6 +41,19 @@ MongoClient.connect(uri, function (err, client) {
             const usersCollection = client.db('Assignment-12').collection('users')
             const reviewsCollection = client.db('Assignment-12').collection('reviews')
 
+            const verifyAdmin = async (req, res, next) => {
+                const email = req.params.email
+                const requester = req.decoded.email;
+                const requesterAccount = await userCollection.findOne({ email: requester })
+                if (requesterAccount.role === 'admin') {
+                    next()
+                }
+                else {
+                    res.status(403).send({ message: 'Unauthorized request' })
+                }
+            }
+
+
             app.put('/user/:email', async (req, res) => {
                 const email = req.params.email;
                 const user = req.body;
@@ -54,6 +67,11 @@ MongoClient.connect(uri, function (err, client) {
                 res.send({ result, token })
             })
 
+            app.post('/tools', verifyJWT, async (req, res) => {
+                const tool = req.body;
+                const result = await toolsCollection.insertOne(tool)
+                res.send(result)
+            })
 
             app.get('/tools', async (req, res) => {
                 const cursor = toolsCollection.find({})
@@ -67,6 +85,14 @@ MongoClient.connect(uri, function (err, client) {
                 const result = await toolsCollection.findOne(query)
                 res.send(result)
             })
+
+            app.delete('/tools/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = { _id: ObjectId(id) }
+                const result = await toolsCollection.deleteOne(query)
+                res.send(result)
+            })
+
 
             app.get('/users', async (req, res) => {
                 const cursor = usersCollection.find({})
