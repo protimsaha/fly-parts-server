@@ -142,6 +142,23 @@ MongoClient.connect(uri, function (err, client) {
                 const reviews = await cursor.toArray()
                 res.send(reviews)
             })
+            app.get('/orders', async (req, res) => {
+                const orders = await orderCollection.find({}).toArray()
+                res.send(orders)
+            })
+
+            app.put('/orders/:id', async (req, res) => {
+                const id = req.params.id;
+                const filter = { _id: ObjectId(id) }
+                const updateDoc = {
+                    $set: {
+                        paid: 'shipped'
+                    }
+                }
+                const result = await orderCollection.updateOne(filter, updateDoc)
+                res.send(result)
+
+            })
 
             app.post('/orders', async (req, res) => {
                 const order = req.body;
