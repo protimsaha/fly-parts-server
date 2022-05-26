@@ -98,15 +98,12 @@ MongoClient.connect(uri, function (err, client) {
             app.post('/create-payment-intent', verifyJWT, async (req, res) => {
                 const product = req.body;
                 const price = product.costInt;
-                // console.log(price)
-                // const price = service.price;
                 const amount = parseFloat(price * 100) || 1;
                 const paymentIntent = await stripe.paymentIntents.create({
                     amount: amount,
                     currency: 'usd',
                     payment_method_types: ['card']
                 });
-                console.log(amount)
                 res.send({ clientSecret: paymentIntent.client_secret })
             });
 
@@ -157,6 +154,13 @@ MongoClient.connect(uri, function (err, client) {
                 const query = { email: email }
                 const orders = await orderCollection.find(query).toArray()
                 return res.send(orders)
+            })
+
+            app.delete('/orders/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = { _id: ObjectId(id) }
+                const result = await orderCollection.deleteOne(query)
+                return res.send(result)
             })
 
 
