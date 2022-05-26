@@ -139,7 +139,7 @@ MongoClient.connect(uri, function (err, client) {
                 const reviews = await cursor.toArray()
                 res.send(reviews)
             })
-            app.get('/orders', async (req, res) => {
+            app.get('/order', async (req, res) => {
                 const orders = await orderCollection.find({}).toArray()
                 res.send(orders)
             })
