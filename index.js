@@ -7,6 +7,7 @@ const jwt = require('jsonwebtoken');
 const port = process.env.PORT || 5000;
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
+const data = require('./data.json');
 
 app.use(cors())
 app.use(express.json())
@@ -66,6 +67,11 @@ MongoClient.connect(uri, function (err, client) {
                 const result = await usersCollection.updateOne(filter, updateDoc, options)
                 const token = jwt.sign({ email: email }, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '1d' })
                 res.send({ result, token })
+            })
+
+
+            app.get('/fkData',(req,res)=>{
+                res.send(data)
             })
 
             app.post('/tools', verifyJWT, async (req, res) => {
