@@ -36,7 +36,7 @@ MongoClient.connect(uri, function (err, client) {
     async function run() {
 
         try {
-            await client.connect()
+            // await client.connect()
             const toolsCollection = client.db('Assignment-12').collection('tools')
             const orderCollection = client.db('Assignment-12').collection('orders')
             const usersCollection = client.db('Assignment-12').collection('users')
